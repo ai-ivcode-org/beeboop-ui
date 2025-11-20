@@ -1,0 +1,63 @@
+
+
+/* css */
+/* Use float-based layout so messages can sit left/right while the bubble's content stays left-justified */
+.chat__message {
+    clear: both;
+    margin: 6px 0;
+    width: 100%;
+}
+
+/* float my messages to the right and align their time text to the right */
+.chat__message.me {
+    float: right;
+    text-align: right; /* makes the time align right; bubble content stays left via .chat__bubble */
+}
+
+/* float other messages to the left and align their time text to the left */
+.chat__message.other {
+    float: left;
+    text-align: left;
+}
+
+/* bubble sizing and ensure content inside is left-justified */
+.chat__bubble {
+    display: inline-block;
+    word-break: break-word;
+    text-align: left; /* IMPORTANT: keep content in the bubble left-justified */
+    vertical-align: top;
+}
+
+/* remove per-sender bubble text alignment; keep bubble contents left-justified */
+
+/* time above the bubble */
+.chat__time {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280; /* subtle color */
+    margin: 0 0 6px 0;
+    line-height: 1;
+}
+
+/* ensure explicit alignment for time (in case parents differ) */
+.chat__message.me .chat__time {
+    text-align: right;
+}
+.chat__message.other .chat__time {
+    text-align: left;
+}
+
+
+/* bubble styles for my messages */
+.chat__message.me .chat__bubble {
+    background-color: #333333; /* light green bubble */
+    border-radius: 20px; /* rounded corners with a "tail" */
+    padding: 0 16px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); /* subtle shadow */
+    max-width: 80%;
+}
+
+/* bubble styles for other messages */
+.chat__message.other .chat__bubble {
+    width: 100%;
+}
