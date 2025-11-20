@@ -1,17 +1,2 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Chat from "./components/chat/Chat.jsx";
-
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <Chat/>
-    </>
-  )
-}
-
+import App from './App.tsx'
 export default App
