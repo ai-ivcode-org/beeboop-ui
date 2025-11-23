@@ -55,16 +55,6 @@ export class ChatController {
                         sender: 'assistant',
                         time: Date.now()
                     })
-                            time: Date.now()
-                        })
-                    } else {
-                        handle.appendMessage({
-                            id: assistantId,
-                            text: ev.response,
-                            sender: 'assistant',
-                            time: Date.now()
-                        })
-                    }
                 }
             })
         } catch (err) {

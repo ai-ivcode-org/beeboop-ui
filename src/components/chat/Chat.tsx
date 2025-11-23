@@ -115,9 +115,6 @@ const Chat = React.forwardRef<ChatHandle, ChatProps>(function Chat({ onSend, ini
   /** Current input value */
   const [input, setInput] = useState('')
 
-  /** Current user selection */
-  const [user, setUser] = useState<Sender>('user')
-
   /** Ref to the messages container for scrolling */
   const containerRef = useRef<HTMLDivElement | null>(null)
 
@@ -282,7 +279,7 @@ const Chat = React.forwardRef<ChatHandle, ChatProps>(function Chat({ onSend, ini
   function handleSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault()
     // construct a Message and pass it to addMessage
-    const toAdd: Message = { id: Date.now(), text: input, sender: user, time: Date.now() }
+    const toAdd: Message = { id: Date.now(), text: input, sender: 'user', time: Date.now() }
     addMessage(toAdd)
     setInput('')
     if (toAdd && onSend) onSend(toAdd)
@@ -317,13 +314,6 @@ const Chat = React.forwardRef<ChatHandle, ChatProps>(function Chat({ onSend, ini
 
       <div className="chat__input_container">
         <form className="chat__form" onSubmit={handleSubmit}>
-          <select
-              value={user}
-              onChange={e => setUser(e.target.value as Sender)}
-          >
-              <option value="user">User</option>
-              <option value="assistant">Assistant</option>
-          </select>
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
