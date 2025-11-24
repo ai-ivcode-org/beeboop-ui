@@ -198,7 +198,7 @@ const Chat = React.forwardRef<ChatHandle, ChatProps>(function Chat({ onSend, ini
     if (!trimmed) return
 
     const messageWithMeta: Message = {
-      id: msg.id ?? Date.now(),
+      id: msg.id,
       text: trimmed,
       sender: msg.sender ?? 'user',
       time: msg.time ?? Date.now(),

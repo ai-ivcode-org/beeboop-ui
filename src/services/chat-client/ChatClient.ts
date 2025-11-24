@@ -1,31 +1,32 @@
-export interface SendMessageRequest {
+export interface ChatRequest {
     message: string,
     stream?: boolean
 }
 
-export interface MessageEvent {
+export interface ChatResponse {
+    id: number
     response: string
     thinking: string
     done: boolean
 }
 
 export interface Callback {
-    onMessage: (message: MessageEvent) => void
+    onMessage: (message: ChatResponse) => void
 }
 
-export interface ChatApi {
-    sendMessage: (request: SendMessageRequest, callback?: Callback) => Promise<MessageEvent>
+export interface ChatClient {
+    sendMessage: (request: ChatRequest, callback?: Callback) => Promise<ChatResponse>
 }
 
-export const ChatApiFactory = (
+export const ChatClientFactory = (
     baseUrl: string
-): ChatApi => {
+): ChatClient => {
     // TODO make sure the baseUrl does not have a trailing slash
 
     const sendMessage = async (
-        request: SendMessageRequest,
+        request: ChatRequest,
         callback?: Callback
-    ): Promise<MessageEvent> => {
+    ): Promise<ChatResponse> => {
 
         const res = await fetch(`${baseUrl}/message`, {
             method: 'POST',
@@ -36,41 +37,29 @@ export const ChatApiFactory = (
         if (!res.body) {
             // No stream support; try to parse whole body as JSON
             const txt = await res.text()
-            try {
-                const parsed = JSON.parse(txt)
-                const ev: MessageEvent = {
-                    response: typeof parsed === 'string' ? parsed : JSON.stringify(parsed),
-                    thinking: '',
-                    done: true
-                }
-                callback?.onMessage(ev)
-                return ev
-            } catch {
-                const ev: MessageEvent = { response: txt, thinking: '', done: true }
-                callback?.onMessage(ev)
-                return ev
-            }
+
+            const parsed = JSON.parse(txt)
+
+            return parsed as ChatResponse
         }
 
         const reader = res.body.getReader()
         const decoder = new TextDecoder()
         let buffer = ''
-        let lastEvent: MessageEvent = { response: '', thinking: '', done: true }
+        let lastEvent: ChatResponse = null;
 
         const emitJson = (jsonStr: string) => {
             if (!jsonStr) return
             try {
-                const parsed = JSON.parse(jsonStr)
-                const ev: MessageEvent = {
-                    response: typeof parsed.response === 'string' ? parsed.response : JSON.stringify(parsed),
-                    thinking: typeof parsed.thinking === 'string' ? parsed.thinking : '',
-                    done: typeof parsed.done === 'boolean' ? parsed.done : true
-                }
-                lastEvent = ev
-                callback?.onMessage(ev)
+                const response = JSON.parse(jsonStr) as ChatResponse
+
+                lastEvent = response
+                callback?.onMessage(response)
             } catch {
+                // TODO add an error callback?
                 // If it isn't a structured MessageEvent, send raw string
-                const ev: MessageEvent = { response: jsonStr, thinking: '', done: true }
+                const ev: ChatResponse = { id: Date.now(), response: jsonStr, thinking: '', done: true }
+
                 lastEvent = ev
                 callback?.onMessage(ev)
             }
